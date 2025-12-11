@@ -43,11 +43,22 @@
         <p>今ハマっているのは、ターン制RPG・ローグライク・コミュニティMODの盛んなタイトルです。🔥</p>
       </div>
     </section>
+    <section class="section" id="game">
+      <div class="game-wrapper">
+        <div class="game-info">
+          <span>Score: <strong id="game-score">0</strong></span>
+          <span id="game-message" class="game-message">WASDで移動・スペースで発射</span>
+        </div>
+        <canvas id="game-canvas"></canvas>
+        <p class="game-commands">Space: Shoot · WASD: Move · R: Reset</p>
+      </div>
+    </section>
     <section class="contact">
       <h2>つながりたい？</h2>
       <p>データチームの立ち上げ、気になる実験、最新パッチのギア調整まで、チャットしたいことがあれば気軽にどうぞ。✉️</p>
       <p>メール: <a href="mailto:penkimaru@example.com">penkimaru@example.com</a></p>
     </section>
   </main>
+  <script src="game.js" defer></script>
 </body>
 </html>

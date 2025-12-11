@@ -130,3 +130,46 @@ a {
 a:hover {
   color: #fb7185;
 }
+
+.game-wrapper {
+  margin-top: 2rem;
+  border: 4px solid #10b981;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #020617;
+  box-shadow: inset 0 0 0 2px #0f172a, 0 0 15px rgba(16, 185, 129, 0.6);
+}
+
+#game-canvas {
+  width: 100%;
+  height: 360px;
+  border: 3px solid #0ea5e9;
+  border-radius: 10px;
+  background: #01050f;
+  image-rendering: pixelated;
+  display: block;
+  margin-top: 0.9rem;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #22d3ee;
+}
+
+.game-message {
+  color: #f4f4f5;
+}
+
+.game-commands {
+  font-size: 0.8rem;
+  color: #cbd5f5;
+  margin-top: 0.4rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
