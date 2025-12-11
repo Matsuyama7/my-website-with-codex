@@ -8,14 +8,22 @@
 </head>
 <body>
   <main>
-    <header>
+    <header class="intro-header">
       <p class="subtitle">データサイエンティスト · ゲーム好き 🎯🎮</p>
       <h1>penkimaru</h1>
-      <p>データを起点にした語り口で、チームの意思決定をよりスマートにする情報を導き出します。ゲームのような遊び心を忘れずに、小さな実験を繰り返す日々です。✨</p>
+      <div class="game-layer">
+        <div class="game-info">
+          <span>Score: <strong id="game-score">0</strong></span>
+          <span id="game-message" class="game-message">WASDで移動・スペースで発射</span>
+        </div>
+        <canvas id="game-canvas" aria-label="自己紹介の絵文字を狙うインベーダーゲーム"></canvas>
+        <p class="game-commands">Space: Shoot · WASD: Move · R: Reset</p>
+      </div>
+      <p class="intro-text">データを起点にした語り口で、チームの意思決定をよりスマートにする情報を導き出します。ゲームのような遊び心を忘れずに、小さな実験を繰り返す日々です。✨</p>
     </header>
     <section class="section" id="about">
       <h2>自己紹介</h2>
-      <p>分析の経験を背景に、データの無数の点から因果を紡ぎ出すのが得意です。どんな案件でも、小さな仮説と検証を重ねて、見える化と伝達を両立させることを心がけています。🔍📊</p>
+      <p class="intro-text">分析の経験を背景に、データの無数の点から因果を紡ぎ出すのが得意です。どんな案件でも、小さな仮説と検証を重ねて、見える化と伝達を両立させることを心がけています。🔍📊</p>
     </section>
     <section class="section">
       <div class="grid">
@@ -41,16 +49,6 @@
         <h2>好きなこと</h2>
         <p>ストラテジーと物語が溶け合うゲームに没頭するとき、脳内に迅速な思考のループが生まれます。戦利品の最適ルート設計、スピードランデータの分析、協力プレイの連携調整、どれも同じ分析的意識で取り組めます。🎮💡</p>
         <p>今ハマっているのは、ターン制RPG・ローグライク・コミュニティMODの盛んなタイトルです。🔥</p>
-      </div>
-    </section>
-    <section class="section" id="game">
-      <div class="game-wrapper">
-        <div class="game-info">
-          <span>Score: <strong id="game-score">0</strong></span>
-          <span id="game-message" class="game-message">WASDで移動・スペースで発射</span>
-        </div>
-        <canvas id="game-canvas"></canvas>
-        <p class="game-commands">Space: Shoot · WASD: Move · R: Reset</p>
       </div>
     </section>
     <section class="contact">

@@ -11,7 +11,6 @@
   let playerY = 0;
   let bullets = [];
   let enemies = [];
-  let enemyDir = 1;
   let score = 0;
   let lastShotTime = 0;
   let gameOver = false;
@@ -23,12 +22,11 @@
 
   const PLAYER_SPEED = 220;
   const BULLET_SPEED = 360;
-  const ENEMY_SPEED = 40;
-  const ENEMY_DROP = 32;
   const SHOT_COOLDOWN = 400;
 
   function collectPageEmojis() {
-    const text = document.querySelector('main').innerText;
+    const nodes = document.querySelectorAll('.intro-text');
+    const text = Array.from(nodes).map((node) => node.textContent).join('');
     const matches = [...text.matchAll(/\p{Extended_Pictographic}/gu)].map((m) => m[0]);
     const unique = [...new Set(matches)];
     return unique.length ? unique : ['👾', '🚀', '💥', '💣'];
@@ -123,32 +121,6 @@
       .map((bullet) => ({ x: bullet.x, y: bullet.y - BULLET_SPEED * dt }))
       .filter((bullet) => bullet.y > -10);
 
-    let edgeHit = false;
-    enemies = enemies.map((enemy) => {
-      if (!enemy.alive) {
-        return enemy;
-      }
-
-      const nextX = enemy.x + enemyDir * ENEMY_SPEED * dt;
-      const exceedsLeft = nextX - 20 < 0;
-      const exceedsRight = nextX + 20 > viewWidth;
-      if (exceedsLeft || exceedsRight) {
-        edgeHit = true;
-      }
-
-      return { ...enemy, x: nextX };
-    });
-
-    if (edgeHit) {
-      enemyDir *= -1;
-      enemies = enemies.map((enemy) => {
-        if (!enemy.alive) {
-          return enemy;
-        }
-        return { ...enemy, y: enemy.y + ENEMY_DROP };
-      });
-    }
-
     bullets.forEach((bullet) => {
       enemies.forEach((enemy) => {
         if (!enemy.alive) {
@@ -169,12 +141,6 @@
     if (!aliveEnemies.length) {
       gameOver = true;
       messageEl.textContent = '全滅！Rキーでリスタート';
-    } else {
-      const reachedPlayer = aliveEnemies.some((enemy) => enemy.y >= playerY - 24);
-      if (reachedPlayer) {
-        gameOver = true;
-        messageEl.textContent = 'Game Over... Rキーで再挑戦';
-      }
     }
 
     scoreEl.textContent = score;
