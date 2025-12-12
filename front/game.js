@@ -182,15 +182,9 @@ export function createBreakoutGame({
     const paddleWidth = effectivePaddleWidth();
     paddleX = Math.max(paddleWidth / 2, Math.min(viewWidth - paddleWidth / 2, paddleX));
 
-    if (!ballLaunched) {
-      balls[0].x = paddleX;
-      balls[0].y = paddleY - BALL_RADIUS - 2;
-      return;
-    }
-
-    blocks?.update(deltaMs);
-    enemies?.update(deltaMs);
-    items?.update(deltaMs);
+    blocks.update(deltaMs);
+    enemies.update(deltaMs);
+    items.update(deltaMs);
 
     for (const particle of particles) {
       particle.lifeMs -= deltaMs;
@@ -210,6 +204,12 @@ export function createBreakoutGame({
       if (balls.length > 1) {
         balls.splice(1);
       }
+    }
+
+    if (!ballLaunched) {
+      balls[0].x = paddleX;
+      balls[0].y = paddleY - BALL_RADIUS - 2;
+      return;
     }
 
     for (const ball of balls) {
@@ -241,33 +241,33 @@ export function createBreakoutGame({
         ball.vy = -BALL_SPEED * Math.cos(bounceAngle);
       }
 
-      const blockResult = blocks?.handleBallCollision(ball, { blastRadius }) ?? { hit: false, scoreDelta: 0 };
+      const blockResult = blocks.handleBallCollision(ball, { blastRadius });
       if (blockResult.hit) {
         score += blockResult.scoreDelta;
         updateGameInfo();
       }
     }
 
-    const drops = enemies?.handleBallCollisions(balls) ?? [];
+    const drops = enemies.handleBallCollisions(balls);
     for (const drop of drops) {
-      items?.spawnItem(drop);
+      items.spawnItem(drop);
       score += 25;
       updateGameInfo();
     }
 
-    const picked = items?.collectByPaddle({
+    const picked = items.collectByPaddle({
       paddleX,
       paddleY,
       paddleWidth,
       paddleHeight: PADDLE_HEIGHT,
-    }) ?? [];
+    });
     for (const type of picked) {
       applyItem(type);
-      setMessage(items?.describe(type) ?? '');
+      setMessage(items.describe(type));
       spawnSparkles({ x: paddleX, y: paddleY, count: 24, color: '#a7f3d0' });
     }
 
-    const remaining = blocks?.hasRemaining?.() ?? true;
+    const remaining = blocks.hasRemaining();
     if (!remaining) {
       gameOver = true;
       ballLaunched = false;
