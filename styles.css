@@ -169,10 +169,15 @@ header.intro-header {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #22d3ee;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
 .game-message {
   color: #f4f4f5;
+  margin: 0.6rem 0 0;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
 }
 
 .game-commands {
