@@ -1,11 +1,10 @@
-(() => {
-  const canvas = document.getElementById('game-canvas');
-  const ctx = canvas.getContext('2d');
-  const scoreEl = document.getElementById('game-score');
-  const livesEl = document.getElementById('game-lives');
-  const messageEl = document.getElementById('game-message');
-  const pxRatio = window.devicePixelRatio || 1;
-
+export function createBreakoutGame({
+  ctx,
+  scoreEl,
+  livesEl,
+  messageEl,
+  onClear,
+} = {}) {
   let viewWidth = 0;
   let viewHeight = 0;
   let paddleX = 0;
@@ -16,9 +15,11 @@
   let lives = 3;
   let ballLaunched = false;
   let gameOver = false;
+  let didClearCallback = false;
   let lastTimestamp = 0;
 
-  const keys = {};
+  let leftPressed = false;
+  let rightPressed = false;
 
   const PADDLE_SPEED = 360;
   const PADDLE_WIDTH = 120;
@@ -32,13 +33,19 @@
   const BRICK_HEIGHT = 20;
   const brickColors = ['#f87171', '#fb923c', '#facc15', '#34d399', '#38bdf8'];
 
-  function resizeCanvas() {
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * pxRatio;
-    canvas.height = rect.height * pxRatio;
-    ctx.setTransform(pxRatio, 0, 0, pxRatio, 0, 0);
-    viewWidth = rect.width;
-    viewHeight = rect.height;
+  function setMessage(text) {
+    if (!messageEl) return;
+    messageEl.textContent = text;
+  }
+
+  function updateGameInfo() {
+    if (scoreEl) scoreEl.textContent = score;
+    if (livesEl) livesEl.textContent = lives;
+  }
+
+  function setViewport({ width, height }) {
+    viewWidth = width;
+    viewHeight = height;
     paddleY = viewHeight - PADDLE_Y_OFFSET;
   }
 
@@ -73,21 +80,13 @@
     ballLaunched = false;
   }
 
-  function setMessage(text) {
-    messageEl.textContent = text;
-  }
-
-  function updateGameInfo() {
-    scoreEl.textContent = score;
-    livesEl.textContent = lives;
-  }
-
   function resetGame() {
     paddleX = viewWidth / 2;
     bricks = createBricks();
     score = 0;
     lives = 3;
     gameOver = false;
+    didClearCallback = false;
     lastTimestamp = 0;
     updateGameInfo();
     setMessage('← →でパドル移動 · Spaceでボール発射');
@@ -132,15 +131,15 @@
     }
   }
 
-  function update(delta) {
+  function update(deltaMs) {
     if (gameOver) {
       return;
     }
-    const dt = delta / 1000;
-    if (keys.a || keys.arrowleft) {
+    const dt = deltaMs / 1000;
+    if (leftPressed) {
       paddleX -= PADDLE_SPEED * dt;
     }
-    if (keys.d || keys.arrowright) {
+    if (rightPressed) {
       paddleX += PADDLE_SPEED * dt;
     }
     paddleX = Math.max(PADDLE_WIDTH / 2, Math.min(viewWidth - PADDLE_WIDTH / 2, paddleX));
@@ -185,7 +184,11 @@
     if (!remaining) {
       gameOver = true;
       ballLaunched = false;
-      setMessage('全ブロック制覇！Rで再挑戦');
+      setMessage('ゲームクリア！Rでコンティニュー');
+      if (!didClearCallback) {
+        didClearCallback = true;
+        if (onClear) onClear();
+      }
       return;
     }
 
@@ -202,6 +205,7 @@
   }
 
   function draw() {
+    if (!ctx) return;
     ctx.clearRect(0, 0, viewWidth, viewHeight);
     ctx.fillStyle = '#020617';
     ctx.fillRect(0, 0, viewWidth, viewHeight);
@@ -234,7 +238,7 @@
     ctx.stroke();
   }
 
-  function loop(timestamp) {
+  function tick(timestamp) {
     if (!lastTimestamp) {
       lastTimestamp = timestamp;
     }
@@ -242,31 +246,28 @@
     lastTimestamp = timestamp;
     update(delta);
     draw();
-    requestAnimationFrame(loop);
   }
 
-  document.addEventListener('keydown', (event) => {
-    const key = event.key.toLowerCase();
-    keys[key] = true;
-    if (event.code === 'Space') {
-      event.preventDefault();
-      launchBall();
-    }
-    if (key === 'r') {
-      resetGame();
-    }
-  });
+  function setMoveState({ left, right }) {
+    leftPressed = Boolean(left);
+    rightPressed = Boolean(right);
+  }
 
-  document.addEventListener('keyup', (event) => {
-    keys[event.key.toLowerCase()] = false;
-  });
+  function isCleared() {
+    return gameOver && !bricks.some((brick) => brick.alive) && lives > 0;
+  }
 
-  window.addEventListener('resize', () => {
-    resizeCanvas();
-    resetGame();
-  });
+  function isGameOver() {
+    return gameOver && lives <= 0;
+  }
 
-  resizeCanvas();
-  resetGame();
-  requestAnimationFrame(loop);
-})();
+  return {
+    setViewport,
+    resetGame,
+    launchBall,
+    tick,
+    setMoveState,
+    isCleared,
+    isGameOver,
+  };
+}
